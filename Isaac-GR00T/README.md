@@ -517,8 +517,8 @@ To add a new benchmark:
 
 ## Quantized LIBERO Inference
 
-This repository supports inference-only evaluation with the supplied 4bit and
-transition-state GPTVQ LIBERO policies. It runs one GPU and one simulation environment,
+This repository supports inference-only evaluation with the supplied execusion-state 4bit and
+transition-state 3bit GPTVQ LIBERO policies. It runs one GPU and one simulation environment,
 limits CPU math libraries to two threads, and disables video recording to avoid
 excessive CPU and disk use. No training is required.
 
@@ -554,7 +554,7 @@ requirements file is needed after `uv sync`.
 
 The policy selects the archive in `quant_weight/` by checkpoint name:
 
-| Checkpoint | 4bit model1 | Transition state model2 |
+| Checkpoint | execusion-state 4bit model1 | Transition-state bit model2 |
 | --- | --- | --- |
 | `libero_spatial` | `gr00t_spatial_gptvq_4bit_b256_k256.pt` | `gr00t_spatial_gptvq_hdiag_3bit_b128x128_cb64_v2.pt` |
 | `libero_object` | `gr00t_object_gptvq_hdiag_4bit_b256_k256.pt` | `gr00t_object_gptvq_hdiag_3bit_b128x128_cb64_v2.pt` |
@@ -567,7 +567,7 @@ modifying an original checkpoint or any archive.
 ### Run an Evaluation
 
 The recommended mixed routing configuration uses a threshold of `0.55`: model1
-uses the 4bit archive and model2 uses the transition-state archive. The table
+uses the execusion-state 4bit archive and model2 uses the transition-state 3bit archive. The table
 records fixed-seed evaluation results for this configuration.
 
 | Suite | Threshold | Accuracy | Transition state ratio |
