@@ -566,17 +566,19 @@ modifying an original checkpoint or any archive.
 
 ### Run an Evaluation
 
-The default router selects the transition-state model for all LIBERO policy
-calls. The table records the fixed-seed, 100-episode evaluation results.
+The recommended mixed routing configuration uses a threshold of `0.55`: model1
+uses the 4bit archive and model2 uses the transition-state archive. The table
+records fixed-seed evaluation results for this configuration.
 
 | Suite | Threshold | Accuracy | Transition state ratio |
 | --- | ---: | ---: | ---: |
-| `libero_spatial` | `-inf` | 96% | 100% |
-| `libero_object` | `-inf` | 99% | 100% |
-| `libero_goal` | `-inf` | 96% | 100% |
-| `libero_10` | `-inf` | 92% | 100% |
+| `libero_spatial` | `0.55` | 96% | 63.3% |
+| `libero_object` | `0.55` | 97% | 58.5% |
+| `libero_goal` | `0.55` | 96% | 53.7% |
+| `libero_10` | `0.55` | 93% | 36.7% |
 
-Use `--routing-threshold` to run a different transition-state routing policy.
+Pass `--routing-threshold 0.55` to reproduce this configuration. You can set a
+different threshold to adjust the transition state ratio for your deployment.
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 \
@@ -585,6 +587,7 @@ NO_ALBUMENTATIONS_UPDATE=1 MPLCONFIGDIR=/tmp/gr00t-mpl \
 .venv/bin/python -u gr00t/eval/run_gr00t_server.py \
   --model-path checkpoints/GR00T-N1.7-LIBERO/libero_spatial \
   --embodiment-tag LIBERO_PANDA --use-sim-policy-wrapper \
+  --routing-threshold 0.55 \
   --seed 42 --host 127.0.0.1 --port 5555
 ```
 
