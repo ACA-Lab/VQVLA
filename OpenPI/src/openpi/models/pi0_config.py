@@ -32,7 +32,10 @@ class Pi0Config(_model.BaseModelConfig):
     # This config option is not used directly by the model, but it is read by the ModelTransformFactory.
     discrete_state_input: bool = None  # type: ignore
 
-    pytorch_compile_mode: str | None = "max-autotune"
+    # Eager mode avoids spawning a large torch-inductor worker pool during
+    # evaluation. Set this to ``"max-autotune"`` explicitly on a dedicated
+    # benchmark machine if compilation is desired.
+    pytorch_compile_mode: str | None = None
 
     def __post_init__(self):
         if self.max_token_len is None:

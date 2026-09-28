@@ -19,6 +19,24 @@ below their respective minimums; no threshold is recommended for those suites
 with these archives. The result is specific to this checkpoint, calibration,
 seed, and benchmark version; tune `--routing-threshold` for another setting.
 
+## Additional threshold probes (2026-09-28)
+
+The evaluator was rerun without replay-video output and with a seven-failure
+early-stop guard. These probes use the same seed, checkpoint, and complete
+archives as the table above:
+
+| Suite | Threshold | Episodes / successes | Transition-state ratio | Outcome |
+| --- | ---: | ---: | ---: | --- |
+| `libero_object` | 0.80 | 20 / 13 | 31.04% | rejected (early stop) |
+| `libero_object` | 1.20 | 20 / 13 | 0.00% | rejected (early stop) |
+| `libero_goal` | 0.80 | 57 / 50 | 43.53% | rejected (early stop) |
+| `libero_goal` | 1.20 | 54 / 47 | 2.67% | rejected (early stop) |
+
+Both Object probes reached seven failures before 100 episodes, so increasing
+the threshold cannot recover the requested accuracy under this protocol. Both
+Goal probes likewise reached seven failures before 100 episodes; the higher
+threshold only reduced transition-state use and did not recover accuracy.
+
 Each listed route uses a complete execution-state 4bit archive and a complete
 transition-state 3bit archive. The quantization configuration is described in
 the top-level README.

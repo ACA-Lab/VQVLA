@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import collections
 import dataclasses
 import logging
@@ -40,7 +42,8 @@ class Args:
     #################################################################################################################
     # Utils
     #################################################################################################################
-    video_out_path: str = "data/libero/videos"  # Path to save videos
+    video_out_path: str | None = None  # Optional path for replay videos; None disables video output
+    max_failures: int | None = None  # Stop once this many failures are observed
 
     seed: int = 7  # Random Seed (for reproducibility)
 
@@ -55,7 +58,8 @@ def eval_libero(args: Args) -> None:
     num_tasks_in_suite = task_suite.n_tasks
     logging.info(f"Task suite: {args.task_suite_name}")
 
-    pathlib.Path(args.video_out_path).mkdir(parents=True, exist_ok=True)
+    if args.video_out_path is not None:
+        pathlib.Path(args.video_out_path).mkdir(parents=True, exist_ok=True)
 
     if args.task_suite_name == "libero_spatial":
         max_steps = 220  # longest training demo has 193 steps
@@ -172,19 +176,36 @@ def eval_libero(args: Args) -> None:
             task_episodes += 1
             total_episodes += 1
 
-            # Save a replay video of the episode
-            suffix = "success" if done else "failure"
-            task_segment = task_description.replace(" ", "_")
-            imageio.mimwrite(
-                pathlib.Path(args.video_out_path) / f"rollout_{task_segment}_{suffix}.mp4",
-                [np.asarray(x) for x in replay_images],
-                fps=10,
-            )
+            if args.video_out_path is not None:
+                suffix = "success" if done else "failure"
+                task_segment = task_description.replace(" ", "_")
+                imageio.mimwrite(
+                    pathlib.Path(args.video_out_path) / f"rollout_{task_segment}_{suffix}.mp4",
+                    [np.asarray(x) for x in replay_images],
+                    fps=10,
+                )
 
             # Log current results
             logging.info(f"Success: {done}")
             logging.info(f"# episodes completed so far: {total_episodes}")
             logging.info(f"# successes: {total_successes} ({total_successes / total_episodes * 100:.1f}%)")
+            if args.max_failures is not None and total_episodes - total_successes >= args.max_failures:
+                logging.warning(
+                    "Stopping early after %d failures (%d/%d episodes)",
+                    args.max_failures,
+                    total_successes,
+                    total_episodes,
+                )
+                logging.info("Total success rate: %.6f", total_successes / total_episodes)
+                logging.info("Total episodes: %d", total_episodes)
+                if routed_queries:
+                    logging.info(
+                        "Transition-state ratio: %.4f (%d/%d policy queries)",
+                        transition_state_queries / routed_queries,
+                        transition_state_queries,
+                        routed_queries,
+                    )
+                return
 
         # Log final results
         logging.info(f"Current task success rate: {float(task_successes) / float(task_episodes)}")
