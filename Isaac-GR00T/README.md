@@ -517,7 +517,7 @@ To add a new benchmark:
 
 ## Quantized LIBERO Inference
 
-This repository supports inference-only evaluation with the supplied execusion-state 4bit and
+This repository supports inference-only evaluation with the supplied execution-state 4bit and
 transition-state 3bit GPTVQ LIBERO policies. It runs one GPU and one simulation environment,
 limits CPU math libraries to two threads, and disables video recording to avoid
 excessive CPU and disk use. No training is required.
@@ -537,8 +537,20 @@ git clone --recurse-submodules https://github.com/ACA-Lab/VQVLA.git
 cd VQVLA/Isaac-GR00T
 ```
 
-Checkpoints and quantized weight archives are intentionally excluded from this
-open-source copy. Obtain them separately and place them in the paths above.
+Checkpoints are intentionally excluded from this open-source copy; obtain the
+LIBERO checkpoint separately and place it under the path above. The quantization
+archives are hosted in the `Isaac-GR00T/` subdirectory of
+[LeoJiang123/VQVLA](https://huggingface.co/LeoJiang123/VQVLA). From this project
+root, download that subdirectory and expose it as `quant_weight/`:
+
+```bash
+git lfs install
+GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 --filter=blob:none --sparse \
+  https://huggingface.co/LeoJiang123/VQVLA .vqvla-weights
+git -C .vqvla-weights sparse-checkout set Isaac-GR00T
+git -C .vqvla-weights lfs pull --include='Isaac-GR00T/*'
+ln -s .vqvla-weights/Isaac-GR00T quant_weight
+```
 
 From the repository root, install the project and LIBERO simulator:
 
@@ -554,7 +566,7 @@ requirements file is needed after `uv sync`.
 
 The policy selects the archive in `quant_weight/` by checkpoint name:
 
-| Checkpoint | execusion-state 4bit model1 | Transition-state bit model2 |
+| Checkpoint | execution-state 4bit model1 | transition-state 3bit model2 |
 | --- | --- | --- |
 | `libero_spatial` | `gr00t_spatial_gptvq_4bit_b256_k256.pt` | `gr00t_spatial_gptvq_hdiag_3bit_b128x128_cb64_v2.pt` |
 | `libero_object` | `gr00t_object_gptvq_hdiag_4bit_b256_k256.pt` | `gr00t_object_gptvq_hdiag_3bit_b128x128_cb64_v2.pt` |
@@ -567,10 +579,10 @@ modifying an original checkpoint or any archive.
 ### Run an Evaluation
 
 The recommended mixed routing configuration uses a threshold of `0.55`: model1
-uses the execusion-state 4bit archive and model2 uses the transition-state 3bit archive. The table
+uses the execution-state 4bit archive and model2 uses the transition-state 3bit archive. The table
 records fixed-seed evaluation results for this configuration.
 
-| Suite | Threshold | Accuracy | Transition state ratio |
+| Suite | Threshold | Accuracy | Transition-state 3bit ratio |
 | --- | ---: | ---: | ---: |
 | `libero_spatial` | `0.55` | 96% | 63.3% |
 | `libero_object` | `0.55` | 97% | 58.5% |
@@ -601,7 +613,7 @@ MUJOCO_GL=egl PYOPENGL_PLATFORM=egl \
 gr00t/eval/sim/LIBERO/libero_uv/.venv/bin/python -u \
   scripts/evaluate_libero_quant_weights.py \
   --suite libero_spatial --episodes 10 \
-  --output eval_results/libero_spatial_4bit.json --seed 42
+  --output eval_results/libero_spatial_mixed.json --seed 42
 ```
 
 Set `--suite` to `libero_object`, `libero_goal`, or `libero_10` for the other
