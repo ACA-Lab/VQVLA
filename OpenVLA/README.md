@@ -42,5 +42,7 @@ the previous action's XYZ translation magnitude. Thresholds are configurable
 for other checkpoints and evaluation settings.
 
 The source retains upstream OpenVLA/Prismatic components needed by model
-loading and evaluation, along with their license notices. Training code is not
-part of the VQVLA workflow; see the upstream project for its training guides.
+loading and evaluation, along with their license notices. Training-only entry
+points and strategy modules are omitted from this VQVLA copy; shared data and
+configuration components remain where inference imports them. See the upstream
+project if you need its training workflow.
