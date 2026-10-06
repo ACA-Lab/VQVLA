@@ -17,7 +17,8 @@ The published archives use hdiag calibration and these fixed settings:
 
 ### Quick start
 
-Use Linux, CUDA, Python 3.10+, and one GPU with at least 20 GiB free memory.
+Use Linux, CUDA, Python 3.11 or newer (as required by `pyproject.toml`), and
+one GPU with at least 20 GiB free memory.
 Clone the umbrella repository and enter this subdirectory:
 
 ```bash
@@ -33,18 +34,27 @@ model under `OpenPI/`; substitute the suite name (`spatial`, `object`, `goal`,
 or `10`) below.
 
 ```bash
-huggingface-cli download LeoJiang123/VQVLA \
-  --include 'OpenPI/pi05_libero_spatial_gptvq_hdiag_*' \
-  --local-dir quant_weight
+python -m pip install --upgrade huggingface_hub
+hf download LeoJiang123/VQVLA \
+  --include 'OpenPI/quant_weight/pi05_libero_spatial_gptvq_hdiag_*' \
+  --local-dir ..
 ```
 
+The `--local-dir ..` destination preserves the `OpenPI/quant_weight/` path
+inside the umbrella checkout, where the commands below expect to find files.
+
 Run original evaluation first, with the same suite, seed, and episode count
-used for the comparison:
+used for the comparison. Start the policy server in one terminal:
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
   uv run scripts/serve_policy.py --env LIBERO --port 8002 \
   policy:checkpoint --policy.config=pi05_libero --policy.dir /path/to/pi05_libero
+```
+
+In a second terminal from the same checkout, run the benchmark client:
+
+```bash
 PYTHONPATH="$PWD/third_party/libero" MUJOCO_GL=egl PYOPENGL_PLATFORM=egl \
   CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=2 uv run examples/libero/main.py \
   --args.host 127.0.0.1 --args.port 8002 --args.task-suite-name libero_spatial \
@@ -55,7 +65,9 @@ For mixed inference, start the server with both complete archives. `model1` is
 the execution-state 4bit model and `model2` is the transition-state 3bit
 model. The router uses the mean XYZ action magnitude from the preceding action
 chunk; the first request always selects model1. The evaluation log reports the
-transition-state ratio.
+transition-state ratio. Restart the policy server in Terminal 1 with the two
+archive options below, then run the same evaluation-client command from
+Terminal 2.
 
 ```bash
 CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \

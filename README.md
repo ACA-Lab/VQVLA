@@ -20,3 +20,13 @@ cd VQVLA
 ```
 
 Then follow the README in the model directory you want to use.
+
+## Release and evaluation notes
+
+- [OpenPI results and setup](OpenPI/VQVLA_RESULTS.md) and
+  [OpenVLA archive/evaluation guide](OpenVLA/VQVLA.md) document the published
+  LIBERO artifacts.
+- [OpenVLA-OFT setup, archive downloads, and four-suite results](OpenVLA-OFT/README.md)
+  includes the commands tested for its mixed inference path.
+- Quantized weight files are hosted separately in the
+  [VQVLA Hugging Face model repository](https://huggingface.co/LeoJiang123/VQVLA).
