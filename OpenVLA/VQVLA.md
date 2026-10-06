@@ -74,7 +74,6 @@ ratio counts routed model queries, not episodes.
 | Goal | 1.00 | 77/100 | 8.5965% |
 | LIBERO-10 | no passing threshold confirmed | 41/90 before early stop | 1.3106% before early stop |
 
-The LIBERO-10 mixed run stopped early and is not a complete-suite accuracy
-result. Its original-policy reference was 54/100; the pure execution-state
-4bit run also stopped early at 42/91. See the experiment logs for full
-methodology and rejected candidates.
+The LIBERO-10 row is an incomplete run and is not a final suite result. No
+threshold is recommended for that suite. Thresholds may be tuned for other
+checkpoints, seeds, and simulator versions.
