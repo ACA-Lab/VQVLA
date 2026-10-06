@@ -1,0 +1,18 @@
+# Local weights, checkpoints, model caches and benchmark rollouts
+.vqvla-weights/
+quant_weight/
+external/
+**/experiments/logs/
+**/rollouts/
+*.pt
+*.pth
+*.safetensors
+*.nsys-rep
+
+# Python and tool caches
+__pycache__/
+*.py[cod]
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.venv/

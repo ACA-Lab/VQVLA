@@ -30,14 +30,21 @@ vector length 2, 128×128 blocks, and codebook size 64.
 
 ## Run a LIBERO evaluation
 
-Install from the VQVLA umbrella checkout using
-[`OpenVLA-OFT/SETUP.md`](../OpenVLA-OFT/SETUP.md) as a dependency guide (use
-the OpenVLA version's `pyproject.toml` and LIBERO evaluation script). In
-particular, clone `https://github.com/ACA-Lab/VQVLA.git`, enter
-`VQVLA/OpenVLA`, install the CUDA-matched PyTorch build, then run
-`python -m pip install -e .` and install the LIBERO requirements. Do not clone
-the upstream OpenVLA repository in place of this VQVLA checkout. From
-`VQVLA/OpenVLA`, run for example:
+Install from the VQVLA umbrella checkout. The example below assumes you have
+already installed CUDA-matched PyTorch 2.2.x in a Python 3.10 environment:
+
+```bash
+git clone --recurse-submodules https://github.com/ACA-Lab/VQVLA.git
+cd VQVLA
+python -m pip install -e OpenVLA
+git clone https://github.com/Lifelong-Robot-Learning/LIBERO.git external/LIBERO
+python -m pip install -e external/LIBERO
+python -m pip install -r OpenVLA/experiments/robot/libero/libero_requirements.txt
+python -m pip install --upgrade huggingface_hub
+```
+
+Do not clone the upstream OpenVLA repository in place of this VQVLA checkout.
+Then, from `VQVLA/OpenVLA`, run for example:
 
 ```bash
 python experiments/robot/libero/run_libero_eval.py \
