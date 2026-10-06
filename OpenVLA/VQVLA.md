@@ -30,9 +30,14 @@ vector length 2, 128×128 blocks, and codebook size 64.
 
 ## Run a LIBERO evaluation
 
-Follow the upstream [installation](./README.md#installation) and
-[LIBERO evaluation](./README.md#libero-simulation-benchmark-evaluations)
-instructions first. Then, from this directory, run for example:
+Install from the VQVLA umbrella checkout using
+[`OpenVLA-OFT/SETUP.md`](../OpenVLA-OFT/SETUP.md) as a dependency guide (use
+the OpenVLA version's `pyproject.toml` and LIBERO evaluation script). In
+particular, clone `https://github.com/ACA-Lab/VQVLA.git`, enter
+`VQVLA/OpenVLA`, install the CUDA-matched PyTorch build, then run
+`python -m pip install -e .` and install the LIBERO requirements. Do not clone
+the upstream OpenVLA repository in place of this VQVLA checkout. From
+`VQVLA/OpenVLA`, run for example:
 
 ```bash
 python experiments/robot/libero/run_libero_eval.py \
