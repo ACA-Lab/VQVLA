@@ -14,6 +14,10 @@ codebook size 256). The transition-state archive uses 3bit VQ (vector length
 collected from the five benchmark tasks; unobserved parameters use the
 documented uniform-weight fallback.
 
+For methodological precision, these archives use diagonal-input-Hessian-
+weighted block K-means (the hdiag block-VQ workflow used for GR00T). They do
+not use GPTQ's sequential full-Hessian error-compensation path.
+
 ## Install
 
 Use Linux, Python 3.10, an NVIDIA GPU, and enough free storage for the RDT
@@ -52,8 +56,8 @@ hf download robotics-diffusion-transformer/maniskill-model \
   rdt/mp_rank_00_model_states.pt --local-dir checkpoints/base
 
 hf download LeoJiang123/VQVLA \
-  RoboticsDiffusionTransformer/quant_weight/rdt_maniskill_4bit_b256_k256_v1.pt \
-  RoboticsDiffusionTransformer/quant_weight/rdt_maniskill_3bit_b128_k64_v1.pt \
+  RoboticsDiffusionTransformer/quant_weight/rdt_maniskill_4bit_b256_k256_kmeanspp_iter100_v5_weights-only.pt \
+  RoboticsDiffusionTransformer/quant_weight/rdt_maniskill_3bit_b128_k64_kmeanspp_iter100_v5_weights-only.pt \
   --local-dir ..
 ```
 
@@ -83,8 +87,8 @@ CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=
   --pretrained_path checkpoints/base/rdt/mp_rank_00_model_states.pt \
   --env-id StackCube-v1 --obs-mode rgb --num-traj 100 --random_seed 0 \
   --sim-backend gpu \
-  --vq-4bit-archive quant_weight/rdt_maniskill_4bit_b256_k256_v1.pt \
-  --vq-3bit-archive quant_weight/rdt_maniskill_3bit_b128_k64_v1.pt \
+  --vq-4bit-archive quant_weight/rdt_maniskill_4bit_b256_k256_kmeanspp_iter100_v5_weights-only.pt \
+  --vq-3bit-archive quant_weight/rdt_maniskill_3bit_b128_k64_kmeanspp_iter100_v5_weights-only.pt \
   --transition-height-threshold 0.12 --vq-mode mixed
 ```
 
@@ -117,13 +121,13 @@ CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=
   python -m scripts.vqvla_quantize_rdt \
   --checkpoint checkpoints/base/rdt/mp_rank_00_model_states.pt \
   --hdiag-dir quant_weight/intermediate --bits 4 \
-  --output quant_weight/rdt_maniskill_4bit_b256_k256_v1.pt
+  --output quant_weight/rdt_maniskill_4bit_b256_k256_kmeanspp_iter100_v5_weights-only.pt
 
 CUDA_VISIBLE_DEVICES=0 OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=1 \
   python -m scripts.vqvla_quantize_rdt \
   --checkpoint checkpoints/base/rdt/mp_rank_00_model_states.pt \
   --hdiag-dir quant_weight/intermediate --bits 3 \
-  --output quant_weight/rdt_maniskill_3bit_b128_k64_v1.pt
+  --output quant_weight/rdt_maniskill_3bit_b128_k64_kmeanspp_iter100_v5_weights-only.pt
 ```
 
 The collector is task-specific: repeat it for the other four task IDs before
