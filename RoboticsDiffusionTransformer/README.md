@@ -154,10 +154,10 @@ The results below use seed 0 and 100 episodes where the mixed run completed.
 | PushCube-v1 | 95% | 0.12 | 98% | 15.46% | Meets the 3pp loss limit; thresholds 0.10, 0.05, and -1.0 produced the same observed result and ratio. |
 | PlugCharger-v1 | 1% | 0.12 | 0% | 2.00% | 1pp below baseline; threshold -1.0 was also unchanged. |
 | PickCube-v1 | 79% | 0.12 | 45% | 3.18% | Does not meet the accuracy limit. |
-| StackCube-v1 | 75% | 0.00 / 0.12 / 0.20 | Early-stopped screening only | Not recorded | No candidate could still reach the required 73/100 success rate: 61/90, 63/93, and 63/92 respectively. These are not complete accuracy scores. |
+| StackCube-v1 | 75% | 0.00 / 0.12 / 0.20 / 0.30 | Early-stopped screening only | 3.86% at 0.30 cutoff | No candidate could still reach the required 73/100 success rate: 61/90, 63/93, 63/92, and 59/87 respectively. These are censored screening results, not complete accuracy scores. |
 
 No single threshold currently meets the accuracy requirement across all tasks.
-The StackCube candidates were early-stopped as soon as the remaining episodes
-could no longer raise the result to 73/100. Those logs are documented in the
-project handoff; they must not be interpreted as 100-episode scores. Threshold
-values are user-adjustable via `--transition-height-threshold`.
+The StackCube candidates were early-stopped at the first point where remaining
+episodes could no longer raise the result to 73/100. Those logs are documented
+in the project handoff; they must not be interpreted as 100-episode scores.
+Threshold values are user-adjustable via `--transition-height-threshold`.
