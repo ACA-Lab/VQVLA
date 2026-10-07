@@ -44,24 +44,6 @@ def parse_args(args=None):
                         help="Stop collecting after this many policy queries; 0 collects all queries.")
     return parser.parse_args()
 
-def accept_this_action(action, action_verified, last_action, obs):
-    """Determine whether an action should be accepted"""
-    l1_distance = torch.sum(torch.abs(torch.tensor(action_verified[:6] - action[:6])))
-    threshold = 0.1
-    delta = 0.025
-
-    # if obs['extra']['is_grasped']:
-    #     threshold -= delta
-    #     diff = obs['extra']['tcp_pose'][0, :3] - obs['extra']['goal_pos']
-    #     distance = torch.linalg.norm(diff)
-    #     print(f"distance = {diff}")
-    #     if distance < 0.1:
-    #         threshold -= delta
-    if last_action[-1] < 1:
-        threshold -= delta
-
-    return l1_distance < threshold
-
 def at_exe_stage(action, last_action, obs, transition_height_threshold=0.12):
     if last_action is None:
         return 2
@@ -72,7 +54,6 @@ def at_exe_stage(action, last_action, obs, transition_height_threshold=0.12):
     else:
         return 2
 
-# set cuda
 args = parse_args()
 if args.hdiag_max_queries < 0:
     raise ValueError("--hdiag-max-queries must be non-negative")
@@ -84,7 +65,6 @@ if (args.vq_4bit_archive is None) != (args.vq_3bit_archive is None):
     raise ValueError("both --vq-4bit-archive and --vq-3bit-archive must be provided together")
 if args.collect_hdiag_output is not None and args.vq_4bit_archive is not None:
     raise ValueError("hdiag collection must use the original unquantized model")
-# set random seeds
 seed = args.random_seed
 random.seed(seed)
 os.environ['PYTHONHASHSEED'] = str(seed)
@@ -176,7 +156,6 @@ for episode in trange(total_episodes):
     obs_window.append(None)
     obs_window.append(np.array(img))
     proprio = obs['agent']['qpos'][:, :-1]
-    # proprio = obs[:, :-1]
 
     global_steps = 0
     done = False
@@ -223,20 +202,6 @@ for episode in trange(total_episodes):
         # Execute every eighth action from the predicted 64-step chunk.
         actions = actions[::gap, :]
         actual_shape = actions.shape[0]
-        # if not exe:
-        #     for idx in range(actual_shape):
-        #         no_quant_actions = policy.step(proprio, images, text_embed, False, exe, False, 0.0).squeeze(0).cpu().numpy()
-        #         action = actions[idx]
-        #         no_quant_action = no_quant_actions[idx]
-        #         print(f"quant_action = {action}\nno_quant_act = {no_quant_action}")
-        #     print()
-
-        # print(f"actions = {actions}")
-        # if not exe:
-        #     for idx in range(actual_shape):
-        #         if actions[idx][2] > 0:
-        #             actions[idx][2] *= 2.0
-        # print(f"generate {64 // gap} actions")
         for idx in range(actual_shape):
             action = actions[idx]
 
@@ -247,7 +212,6 @@ for episode in trange(total_episodes):
             stage = at_exe_stage(
                 action, last_action, obs, args.transition_height_threshold
             )
-            # print(f"flag = {flag}")
             if stage == 0 and flag != 2:
                 exe = True
             elif stage == 1 and flag != 2:
@@ -256,14 +220,6 @@ for episode in trange(total_episodes):
                 exe = True
 
             obs, _, terminated, truncated, info = env.step(action)
-            # pos = obs['extra']['tcp_pose'][0, :3].cpu().tolist()
-            # action_for_print = action.tolist()
-            # print(f"pos = ({pos[0]:.4f}, {pos[1]:.4f}, {pos[2]:.4f}), action = ({action_for_print[0]:.4f}, {action_for_print[1]:.4f}, {action_for_print[2]:.4f}, {action_for_print[-1]:.4f})")
-            # if action[-1] == 1:
-            #     exe = False
-            # else:
-            #     exe = True
-            # print(f"obs = {obs}")
             img = env.render().squeeze(0).detach().cpu().numpy()
             obs_window.append(img)
             proprio = obs['agent']['qpos'][:, :-1]
@@ -297,7 +253,6 @@ for episode in trange(total_episodes):
             flush=True,
         )
         break
-
 
 if hdiag_collector is not None:
     hdiag_collector.close()

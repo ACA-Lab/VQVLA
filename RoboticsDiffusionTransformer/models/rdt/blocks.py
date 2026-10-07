@@ -10,7 +10,6 @@
 # MAE: https://github.com/facebookresearch/mae/blob/main/models_mae.py
 # --------------------------------------------------------
 
-
 import math
 from collections import OrderedDict
 
@@ -63,7 +62,6 @@ class TimestepEmbedder(nn.Module):
         t_freq = self.timestep_embedding(t, self.frequency_embedding_size)
         t_emb = self.mlp(t_freq)
         return t_emb
-
 
 #################################################################################
 #                          Cross Attention Layers                               #
@@ -154,7 +152,6 @@ class CrossAttention(nn.Module):
             x = self.proj_drop(x)
         return x
 
-
 #################################################################################
 #                                 RDT Block                                     #
 #################################################################################
@@ -184,25 +181,20 @@ class RDTBlock(nn.Module):
     def forward(self, x, c, mask=None, use_quant=False, exe=True):
         origin_x = x
         x = self.norm1(x)
-        # print("x.shape = ", x.shape)
         x = self.attn(x, use_quant, exe, 1)
         x = x + origin_x
 
         origin_x = x
         x = self.norm2(x)
-        # print("x.shape = ", x.shape)
-        # print("c.shape = ", c.shape)
         x = self.cross_attn(x, c, mask, use_quant, exe)
         x = x + origin_x
 
         origin_x = x
         x = self.norm3(x)
-        # print("x.shape = ", x.shape)
         x = self.ffn(x, use_quant, exe)
         x = x + origin_x
 
         return x
-
 
 class FinalLayer(nn.Module):
     """
@@ -221,7 +213,6 @@ class FinalLayer(nn.Module):
         x = self.norm_final(x)
         x = self.ffn_final(x)
         return x
-
 
 #################################################################################
 #                   Sine/Cosine Positional Embedding Functions                  #
@@ -248,7 +239,6 @@ def get_1d_sincos_pos_embed_from_grid(embed_dim, pos):
 
     emb = np.concatenate([emb_sin, emb_cos], axis=1)  # (M, D)
     return emb
-
 
 def get_nd_sincos_pos_embed_from_grid(embed_dim, grid_sizes):
     """
@@ -277,7 +267,6 @@ def get_nd_sincos_pos_embed_from_grid(embed_dim, grid_sizes):
             get_1d_sincos_pos_embed_from_grid(dim_for_each_grid, pos).reshape(posemb_shape)
         valid_size_idx += 1
     return emb
-
 
 def get_multimodal_cond_pos_embed(embed_dim, mm_cond_lens: OrderedDict,
                                   embed_modality=True):

@@ -10,20 +10,17 @@ from models.multimodal_encoder.siglip_encoder import SiglipVisionTower
 from models.multimodal_encoder.t5_encoder import T5Embedder
 from models.rdt_runner import RDTRunner
 
-
 MANISKILL_INDICES = [
     STATE_VEC_IDX_MAPPING[f"right_arm_joint_{i}_pos"] for i in range(7)
 ] + [
     STATE_VEC_IDX_MAPPING[f"right_gripper_open"]
 ]
 
-
 def create_model(args, pretrained, **kwargs):
     model = RoboticDiffusionTransformerModel(args, **kwargs)
     if pretrained is not None:
         model.load_pretrained_weights(pretrained)
     return model
-
 
 DATA_STAT = {'state_min': [-0.7463043928146362, -0.0801204964518547, -0.4976441562175751, -2.657780647277832, -0.5742632150650024, 1.8309762477874756, -2.2423808574676514, 0.0], 'state_max': [0.7645499110221863, 1.4967026710510254, 0.4650936424732208, -0.3866899907588959, 0.5505855679512024, 3.2900545597076416, 2.5737812519073486, 0.03999999910593033], 'action_min': [-0.7472005486488342, -0.08631071448326111, -0.4995281398296356, -2.658363103866577, -0.5751323103904724, 1.8290787935256958, -2.245187997817993, -1.0], 'action_max': [0.7654682397842407, 1.4984270334243774, 0.46786263585090637, -0.38181185722351074, 0.5517147779464722, 3.291581630706787, 2.575840711593628, 1.0]}
 
@@ -87,7 +84,6 @@ class RoboticDiffusionTransformerModel(object):
             ],
             dtype=self.dtype,
         )
-        # print(f"RDTRunner model = {_model}")
 
         return _model
 
@@ -206,9 +202,6 @@ class RoboticDiffusionTransformerModel(object):
         Returns:
             action: predicted action
         """
-        # start_event = torch.cuda.Event(enable_timing=True)
-        # end_event = torch.cuda.Event(enable_timing=True)
-        # start_event.record()
         device = self.device
         dtype = self.dtype
 
@@ -253,57 +246,19 @@ class RoboticDiffusionTransformerModel(object):
             image_tensor_list.append(image)
 
         image_tensor = torch.stack(image_tensor_list, dim=0).to(device, dtype=dtype)
-        # end_event.record()
-        # torch.cuda.synchronize()
-        # elapsed_time = start_event.elapsed_time(end_event)
-        # print(f"process image time: {elapsed_time} ms, {image_tensor_list.__len__}")
-
-
-        # start_event = torch.cuda.Event(enable_timing=True)
-        # end_event = torch.cuda.Event(enable_timing=True)
-        # start_event.record()
 
         image_embeds = self.vision_model(image_tensor).detach()
-        # print(self.vision_model)
-
-        # end_event.record()
-        # torch.cuda.synchronize()
-        # elapsed_time = start_event.elapsed_time(end_event)
-        # print(f"ViT time: {elapsed_time} ms")
-
-        # start_event = torch.cuda.Event(enable_timing=True)
-        # end_event = torch.cuda.Event(enable_timing=True)
-        # start_event.record()
 
         image_embeds = image_embeds.reshape(-1, self.vision_model.hidden_size).unsqueeze(0)
-
-        # history of actions
-        # start_event = torch.cuda.Event(enable_timing=True)
-        # end_event = torch.cuda.Event(enable_timing=True)
-        # start_event.record()
 
         joints = proprio.to(device).unsqueeze(0)   # (1, 1, 14)
         states, state_elem_mask = self._format_joint_to_state(joints)    # (1, 1, 128), (1, 128)
         states, state_elem_mask = states.to(device, dtype=dtype), state_elem_mask.to(device, dtype=dtype)
         states = states[:, -1:, :]  # (1, 1, 128)
 
-        # end_event.record()
-        # torch.cuda.synchronize()
-        # elapsed_time = start_event.elapsed_time(end_event)
-        # print(f"Proprio time: {elapsed_time} ms")
-
         ctrl_freqs = torch.tensor([self.control_frequency]).to(device)
 
         text_embeds = text_embeds.to(device, dtype=dtype)
-
-        # end_event.record()
-        # torch.cuda.synchronize()
-        # elapsed_time = start_event.elapsed_time(end_event)
-        # print(f"middle time: {elapsed_time} ms")
-
-        # start_event = torch.cuda.Event(enable_timing=True)
-        # end_event = torch.cuda.Event(enable_timing=True)
-        # start_event.record()
 
         trajectory = self.policy.predict_action(
             lang_tokens=text_embeds,
@@ -320,20 +275,6 @@ class RoboticDiffusionTransformerModel(object):
             noise_std=noise_std,
         )
 
-        # end_event.record()
-        # torch.cuda.synchronize()
-        # elapsed_time = start_event.elapsed_time(end_event)
-        # print(f"predict_action time: {elapsed_time} ms")
-
-        # start_event = torch.cuda.Event(enable_timing=True)
-        # end_event = torch.cuda.Event(enable_timing=True)
-        # start_event.record()
-
         trajectory = self._unformat_action_to_joint(trajectory).to(torch.float32)
-
-        # end_event.record()
-        # torch.cuda.synchronize()
-        # elapsed_time = start_event.elapsed_time(end_event)
-        # print(f"action head time: {elapsed_time} ms")
 
         return trajectory

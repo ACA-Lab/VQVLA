@@ -18,7 +18,6 @@ from models.rdt.blocks import (FinalLayer, RDTBlock, TimestepEmbedder,
                                get_1d_sincos_pos_embed_from_grid,
                                get_multimodal_cond_pos_embed)
 
-
 class RDT(nn.Module):
     """
     Class for Robotics Diffusion Transformers.
@@ -150,8 +149,6 @@ class RDT(nn.Module):
         # torch.manual_seed(seed)
         x = x + self.x_pos_embed
         if add_noise:
-            # print(f"mean = {torch.mean(x)}")
-            # print(f"std = {torch.std(x)}")
             noise = noise_std * torch.randn_like(x)
             x += noise
         # Note the lang is of variable length
