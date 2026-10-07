@@ -11,6 +11,8 @@ kept in its own top-level directory.
 - [OpenVLA](OpenVLA/README.md) — OpenVLA, including GPTVQ LIBERO inference support.
 - [OpenVLA-OFT](OpenVLA-OFT/README.md) — OpenVLA-OFT, including complete-model
   GPTVQ archives and LIBERO execution-state / transition-state inference.
+- [RoboticsDiffusionTransformer](RoboticsDiffusionTransformer/README.md) — RDT,
+  including full-parameter GPTVQ-Hdiag quantization and ManiSkill inference.
 
 Clone with submodules before following a model-specific README:
 

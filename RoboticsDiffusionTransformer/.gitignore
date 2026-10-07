@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+checkpoints/
+logs/
+quant_weight/*.pt
+quant_weight/intermediate/
+text_embed_*.pt

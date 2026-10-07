@@ -1,0 +1,11 @@
+accelerate==0.30.1
+diffusers==0.27.2
+mani_skill==3.0.0b21
+numpy==1.26.4
+Pillow==11.1.0
+psutil==7.0.0
+PyYAML==6.0.2
+sentencepiece==0.2.0
+timm==1.0.3
+transformers==4.41.0
+tqdm
