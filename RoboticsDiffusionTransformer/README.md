@@ -153,11 +153,12 @@ The results below use seed 0 and 100 episodes where the mixed run completed.
 |---|---:|---:|---:|---:|---|
 | PushCube-v1 | 95% | 0.12 | 98% | 15.46% | Meets the 3pp loss limit; thresholds 0.10, 0.05, and -1.0 produced the same observed result and ratio. |
 | PlugCharger-v1 | 1% | 0.12 | 0% | 2.00% | 1pp below baseline; threshold -1.0 was also unchanged. |
-| PickCube-v1 | 79% | 0.12 (complete); 0.30 (screened) | 45/100 at 0.12; 16/40 at 0.30 cutoff | 3.18% at 0.12; 2.99% at 0.30 cutoff | Does not meet the accuracy limit; the 0.30 candidate was stopped after 24 failures, when 77/100 became unreachable. |
-| StackCube-v1 | 75% | 0.00 / 0.12 / 0.20 / 0.30 | Early-stopped screening only | 3.86% at 0.30 cutoff | No candidate could still reach the required 73/100 success rate: 61/90, 63/93, 63/92, and 59/87 respectively. These are censored screening results, not complete accuracy scores. |
+| PickCube-v1 | 79% | 0.12 (complete); 0.30 (continuation pending) | 45/100 at 0.12; 16/40 at 0.30 cutoff | 3.18% at 0.12; 2.99% at 0.30 cutoff | The 0.12 result fails. With a 76/100 requirement (≤3pp loss), the 0.30 candidate could only qualify if all 60 remaining episodes succeed; continuation is pending. |
+| StackCube-v1 | 75% | 0.00 / 0.12 / 0.20 (rejected); 0.30 (continuation pending) | 61/90, 63/93, 63/92; 59/87 at 0.30 cutoff | 3.86% at 0.30 cutoff | The 0.00/0.12/0.20 candidates cannot reach 72/100. The 0.30 candidate could only qualify if all 13 remaining episodes succeed; continuation is pending. These are censored results, not complete accuracy scores. |
 
 No single threshold currently meets the accuracy requirement across all tasks.
-The StackCube candidates were early-stopped at the first point where remaining
-episodes could no longer raise the result to 73/100. Those logs are documented
-in the project handoff; they must not be interpreted as 100-episode scores.
-Threshold values are user-adjustable via `--transition-height-threshold`.
+StackCube screening logs and remaining-seed continuations are documented in
+the project handoff; censored results must not be interpreted as 100-episode
+scores. The 3pp criterion here is inclusive (minimum success is baseline minus
+3 percentage points). Threshold values are user-adjustable via
+`--transition-height-threshold`.
