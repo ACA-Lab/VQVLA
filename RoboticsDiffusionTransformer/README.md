@@ -153,8 +153,8 @@ The results below use seed 0 and 100 episodes where the mixed run completed.
 |---|---:|---:|---:|---:|---|
 | PushCube-v1 | 95% | 0.12 | 98% | 15.46% | Meets the 3pp loss limit; thresholds 0.10, 0.05, and -1.0 produced the same observed result and ratio. |
 | PlugCharger-v1 | 1% | 0.12 | 0% | 2.00% | 1pp below baseline; threshold -1.0 was also unchanged. |
-| PickCube-v1 | 79% | 0.12 (complete); 0.30 (continuation pending) | 45/100 at 0.12; 16/40 at 0.30 cutoff | 3.18% at 0.12; 2.99% at 0.30 cutoff | The 0.12 result fails. With a 76/100 requirement (≤3pp loss), the 0.30 candidate could only qualify if all 60 remaining episodes succeed; continuation is pending. |
-| StackCube-v1 | 75% | 0.00 / 0.12 / 0.20 (rejected); 0.30 (continuation pending) | 61/90, 63/93, 63/92; 59/87 at 0.30 cutoff | 3.86% at 0.30 cutoff | The 0.00/0.12/0.20 candidates cannot reach 72/100. The 0.30 candidate could only qualify if all 13 remaining episodes succeed; continuation is pending. These are censored results, not complete accuracy scores. |
+| PickCube-v1 | 79% | 0.12 / 0.30 (rejected) | 45/100; 17/42 at 0.30 cutoff | 3.18% at 0.12; 3.02% at 0.30 cutoff | Neither candidate meets the 76/100 requirement (≤3pp loss). At 0.30, one failure in the continuation makes the best possible final score 75/100. |
+| StackCube-v1 | 75% | 0.00 / 0.12 / 0.20 / 0.30 (rejected) | 61/90, 63/93, 63/92; 60/89 at 0.30 cutoff | 3.85% at 0.30 cutoff | None can meet the 72/100 requirement (≤3pp loss); after one continuation failure at 0.30, the maximum possible final score was 71/100. These are censored results, not complete accuracy scores. |
 
 No single threshold currently meets the accuracy requirement across all tasks.
 StackCube screening logs and remaining-seed continuations are documented in
