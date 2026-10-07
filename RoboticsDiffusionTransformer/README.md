@@ -153,7 +153,7 @@ The results below use seed 0 and 100 episodes where the mixed run completed.
 |---|---:|---:|---:|---:|---|
 | PushCube-v1 | 95% | 0.12 | 98% | 15.46% | Meets the 3pp loss limit; thresholds 0.10, 0.05, and -1.0 produced the same observed result and ratio. |
 | PlugCharger-v1 | 1% | 0.12 | 0% | 2.00% | 1pp below baseline; threshold -1.0 was also unchanged. |
-| PickCube-v1 | 79% | 0.12 | 45% | 3.18% | Does not meet the accuracy limit. |
+| PickCube-v1 | 79% | 0.12 (complete); 0.30 (screened) | 45/100 at 0.12; 16/40 at 0.30 cutoff | 3.18% at 0.12; 2.99% at 0.30 cutoff | Does not meet the accuracy limit; the 0.30 candidate was stopped after 24 failures, when 77/100 became unreachable. |
 | StackCube-v1 | 75% | 0.00 / 0.12 / 0.20 / 0.30 | Early-stopped screening only | 3.86% at 0.30 cutoff | No candidate could still reach the required 73/100 success rate: 61/90, 63/93, 63/92, and 59/87 respectively. These are censored screening results, not complete accuracy scores. |
 
 No single threshold currently meets the accuracy requirement across all tasks.
